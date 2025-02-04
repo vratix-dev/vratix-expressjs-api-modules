@@ -1,0 +1,166 @@
+---
+title: Manifest File
+description: API Module configuration
+---
+
+Each Private API Module needs a `manifest.json` file which defines the module configurations used when installing the module via our CLI.
+
+The `manifest.json` file is automatically created inside `.config/manifest.json` when you create a new API Module via the CLI.
+If you create an API Module from scratch you need to make sure to add a valid manifest.json file so you can later add it to your Vratix registry.
+
+## `key`
+
+This is the unique identifier of every Private Module in your registry. 
+When using the CLI, the `key` is generated from the module name you select.
+
+```json
+{
+  "key": "your-module-key"
+}
+```
+
+> This is unique across your account.
+
+## `name`
+
+This is the name of your module, it shows on the Vratix dashboard and CLI.
+
+```json
+{
+  "name": "Your API Module"
+}
+```
+
+## `description`
+
+Short description of what the modules does. Shows up on the Vratix dashboard and CLI.
+
+```json
+{
+  "description": "A simple API module that integrates some repetitive logic"
+}
+```
+
+## `typescript`
+
+Added for forward compatibility, this doesn't change anything.
+
+```json
+{
+    "typescript": true | false
+}
+```
+
+## `framework`
+
+Added for forward compatibility, this doesn't change anything.
+
+```json
+{
+  "framework": "express"
+}
+```
+
+## `folders`
+
+Just like when creating new Node.js services with the Community Modules, you can modify the default folder names of your API Module.
+
+> You can have different folder names for your API Module and `folderOverrides` in your API project.
+> The CLI will resolve any differences in imports and folder names automatically.
+
+### `folders.controllers`
+
+Specifies the folder path for storing controller files, where you’ll implement business logic.
+
+```json
+{
+  "folders": {
+    "controllers": "controllers"
+  }
+}
+```
+
+### `folders.routes`
+
+Defines the location for endpoint route files.
+
+```json
+{
+  "folders": {
+    "routes": "routes"
+  }
+}
+```
+
+### `folders.middleware`
+
+Sets the path for middleware files, allowing you to configure custom middleware for Express.js.
+
+```json
+{
+  "folders": {
+    "middleware": "middleware"
+  }
+}
+```
+
+### `folders.utils`
+
+Specifies where helper and miscellaneous utility scripts are stored.
+
+```json
+{
+  "folders": {
+    "utils": "utils"
+  }
+}
+```
+
+## `registryDependencies`
+
+An array of **Private API Module** keys. Use this property to list any dependencies from **your private** Vratix registry.
+
+The CLI will try to install all private dependencies when adding the API Module to a project.
+
+```json
+{
+  "registryDependencies": ["payments", "scheduling-jobs"]
+}
+```
+
+> Currently you need to add this manually and make sure the dependency modules exist.
+
+## `communityDependencies`
+
+An array of **Community API Module** keys. Use this property to list any dependencies from **the open source** Vratix registry (API Library).
+
+The CLI will try to install all community dependencies when adding the API Module to a project.
+
+```json
+{
+  "communityDependencies": ["auth-basic"]
+}
+```
+
+> Currently you need to add this manually and make sure the dependency modules exist.
+
+## Example `manifest.json`
+
+```json
+{
+  "key": "ios-billing-module",
+  "version": "1.0.0",
+  "name": "iOS Billing",
+  "description": "A simple API module that integrates billing for iOS mobile apps",
+  "typescript": true,
+  "framework": "express",
+  "folders": {
+    "controllers": "controllers",
+    "routes": "routes",
+    "middleware": "middleware",
+    "utils": "utils"
+  },
+  "registryDependencies": ["payments"],
+  "communityDependencies": ["auth-basic"]
+}
+```
