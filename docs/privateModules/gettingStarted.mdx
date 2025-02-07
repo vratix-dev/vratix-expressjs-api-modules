@@ -1,0 +1,125 @@
+---
+title: Getting Started
+description: Create custom API Modules and install them via the Vratix CLI into any Node.js project
+---
+
+**Private API Modules** allow developers to write, manage, and reuse custom backend API logic.  
+You can publish private modules via the CLI or by connecting a GitHub repository through the Vratix dashboard.
+
+## How Private API Modules Work
+
+- Each user gets a **private registry** where they can publish and manage their API Modules.
+- Modules can be created using the **Vratix CLI** or by linking a **GitHub repository**.
+- Every module must include a valid [`manifest.json`](/docs/privateModules/manifest) file.
+- Modules can depend on **Community API Modules** (Vratix Open Source API Library) or other private modules from your registry.
+- Each module has a **size limit of 5MB**.
+
+## Create Your Vratix Account
+
+To create, publish, and install Private Modules, you need to create a [Vratix account](/auth).
+
+When you sign up, we will create a **Private Registry** linked to your account, where all your custom API Modules will be stored.
+
+## Authenticating Your CLI Session  
+
+Before you can **publish** private modules or **install** them into your API projects, you need to authenticate your CLI session.  
+
+Run the following command:  
+
+```bash
+npx vratix login
+```
+
+This will open a browser window where you can authorize the CLI to use your Vratix account.
+Once authenticated, you can proceed with publishing and installing modules.
+
+Your CLI session is **valid for 1 hour** after which you need to authenticate again. 
+
+## Creating a New Private API Module
+
+You can create a new API Module in two ways:
+
+### Using Our GitHub Template
+
+We provide a [GitHub template](https://github.com/vratix-dev/api-module-template) to quickly scaffold a new API Module.  
+Fork the template, customize your module, and publish it using the CLI or by linking the repository to Vratix.
+
+### Using the CLI
+
+Run the following command:
+
+```bash
+npx vratix module new
+```
+
+This command will guide you through creating the basic structure of an API Module, including a `manifest.json` file.
+
+### Example `manifest.json`
+
+```json
+{
+  "key": "ios-billing-module",
+  "version": "1.0.0",
+  "name": "iOS Billing",
+  "description": "A simple API module that integrates billing for iOS mobile apps",
+  "typescript": true,
+  "framework": "express",
+  "folders": {
+    "controllers": "controllers",
+    "routes": "routes",
+    "middleware": "middleware",
+    "utils": "utils"
+  },
+  "registryDependencies": ["payments"],
+  "communityDependencies": ["auth-basic"]
+}
+```
+
+Learn more about configuring your module’s [`manifest.json`](/docs/privateModules/manifest).
+
+You can also override the standard folder names, just like when creating a new API service with **Community Modules**.
+
+## Publishing a Private API Module
+
+There are two ways to publish a private module:
+
+### Using a GitHub Repository
+
+You can also publish modules by linking a GitHub repository to your account in the **Vratix Dashboard**.  
+This ensures seamless source code updates on every push to the `main` branch.
+
+**Note:** Only repositories with a valid `manifest.json` file can be imported to your private registry.
+
+### Using the CLI
+
+Once your module is ready, publish it with:
+
+```bash
+npx vratix module publish --private
+```
+
+This will upload your module to your **private registry**.
+
+## Installing a Private API Module
+
+Private modules published via the CLI or GitHub can be easily installed into your Node.js projects.
+
+> ⚠ **Do not modify or move your `manifest.json` file**, as this may cause issues during installation.
+
+To install a private module, run:
+
+```bash
+npx vratix add
+```
+
+You will first be asked if you want to add any **Community Modules**, then you can select from your **Private Registry**.
+
+## Managing Dependencies
+
+Private modules can depend on:
+
+- **Community API Modules** (our Open Source API Library)
+- **Other Private Modules** from your registry
+
+Dependencies should be listed in `manifest.json`.  
+When installing a module, the **Vratix CLI** will automatically resolve and install its dependencies.

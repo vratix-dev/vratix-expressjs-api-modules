@@ -60,3 +60,49 @@ Options:
   -c, --cwd <cwd>  The working directory. Defaults to the current directory.
   -h, --help       Display help for the command
 ```
+
+## `module [command]`
+
+You can use the `module` commands to create and publish new API modules to your private registry. 
+
+```bash
+npx vratix module [command]
+```
+
+> **NOTE**: To publish API modules you need to authenticate your CLI session using the [`login`](#login) command
+
+### Options
+```txt
+Usage: vratix module|m [options] [command]
+
+Private module commands. Use them to create, validate and publish Private API Modules.
+
+Options:
+  -h, --help         display help for command
+
+Commands:
+  new                Create a new API Module, this will create the necessary files and directories for your new module.
+  publish [options]  Publish your API Module to your Vratix registry.
+  help [command]     display help for command
+```
+
+## `login`
+
+To publish or install Private API Modules you need to authenticate your CLI session. To do this use the `login` command:
+
+```bash
+npx vratix login
+```
+
+This will open a browser window and ask you to verify an 8 character code shown in your terminal. The code will look something like this `6AF2-4CPI`. 
+You need to have a Vratix account to be able to authenticate your CLI session. [Create a new account](/auth).
+
+### Options
+```txt
+Usage: vratix login [options]
+
+Authenticate your CLI session with your Vratix account.
+
+Options:
+  -h, --help  display help for command
+```
