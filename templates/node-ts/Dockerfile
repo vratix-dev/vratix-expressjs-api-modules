@@ -24,4 +24,4 @@ COPY --from=build /app/package.json /app/pnpm-lock.yaml ./
 RUN npm install -g pnpm
 RUN pnpm install --production
 EXPOSE 3000
-CMD ["node", "./dist/server.js"]
+CMD ["pnpm", "run", "prod:serve"]
