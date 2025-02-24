@@ -91,16 +91,21 @@ Customize the paths for main module folders if needed:
 
 ### Ready To Go
 
-Once setup is complete, run:
+Once setup is complete, to start your service run:
 
 ```bash
-npm run dev
+npm run dev:local
 ```
 
-to start your service.
-
-To add additional modules later, simply use:
+If you are using docker you can run your service container with: 
 
 ```bash
-npx vratix add auth-basic
+docker compose up -d --build
+```
+> Check [Deployment](/docs/deploy) for detailed guides.
+
+#### To add additional modules after the initial setup, use:
+
+```bash
+npx vratix add <module>
 ```
