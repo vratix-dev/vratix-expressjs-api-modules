@@ -8,8 +8,8 @@
   "scripts": {
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "dev:local": "tsup --watch --onSuccess 'pnpm local:serve'",
-    "dev:docker": "tsup --watch --onSuccess 'pnpm docker:serve'",
+    "dev:local": "tsup --watch --onSuccess 'pnpm run local:serve'",
+    "dev:docker": "tsup --watch --onSuccess 'pnpm run docker:serve'",
     "local:serve": "pkill -f 'node dist/server.js'; node dist/server.js &",
     "docker:serve": "if [ -f /tmp/server.pid ]; then kill -9 $(cat /tmp/server.pid); fi; node dist/server.js & echo $! > /tmp/server.pid",
     "clean": "rimraf ./dist",
