@@ -6,9 +6,12 @@ const getUserSubsSchema = yup.object({
 });
 
 const createCheckoutSchema = getUserSubsSchema.shape({
+  userEmail: yup.string().email().required(),
   priceId: yup.string().required(),
   seats: yup.number().min(1).default(1),
 });
+
+const createPaymentLinkSchema = createCheckoutSchema.omit(["userEmail"])
 
 const updatePlanSchema = getUserSubsSchema.shape({
   subscriptionId: yup.string().required(),
@@ -48,7 +51,7 @@ export const subscriptionValidator = (): SubscriptionValidator => {
     },
 
     async validateCreatePaymentLink(payload) {
-      return await createCheckoutSchema
+      return await createPaymentLinkSchema
         .noUnknown()
         .strict(true)
         .validate(payload);

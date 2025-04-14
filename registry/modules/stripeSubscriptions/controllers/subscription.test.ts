@@ -45,13 +45,14 @@ describe("stripe-subscriptions API Module tests", () => {
   describe("Subscription Controller Tests", () => {
     let controller: ReturnType<typeof createSubscriptionController>;
     let subscriptionRepoMock: UserSubscriptionRepository;
-    let userRepositoryMock: Partial<UserRepository>;
 
     const mockUserId = 123;
+    const mockUserEmail = "mock@test.com";
     const mockSubId = "sub_123";
     const mockPriceId = "price_123";
     const mockPlanKey = "basic";
     const mockUserSub = {
+      name: "Basic Plan",
       plan: mockPlanKey,
       subscriptionId: mockSubId,
       isOwner: true,
@@ -79,14 +80,8 @@ describe("stripe-subscriptions API Module tests", () => {
         removeUserSubscription: vi.fn(),
       };
 
-      userRepositoryMock = { getUserById: vi.fn() };
-
       // Injecting the mocked repositories into the controller
-      controller = createSubscriptionController(
-        stripe,
-        subscriptionRepoMock,
-        userRepositoryMock as UserRepository
-      );
+      controller = createSubscriptionController(stripe, subscriptionRepoMock);
     });
 
     it("should return available subscriptions with correct structure", async () => {
@@ -131,14 +126,23 @@ describe("stripe-subscriptions API Module tests", () => {
         mockUserSub,
       ]);
       (stripe.subscriptions.retrieve as Mock).mockResolvedValue({
-        items: { data: [{ quantity: mockUserSub.seats }] },
+        ...mockSubscription,
+        items: {
+          data: [
+            {
+              ...mockSubItem,
+              quantity: mockUserSub.seats,
+            },
+          ],
+        },
       });
 
       const result = await controller.getUserSubs({ userId: mockUserId });
       const { customerId, ...expectedValue } = mockUserSub;
 
       expect(stripe.subscriptions.retrieve).toHaveBeenCalledWith(
-        mockUserSub.subscriptionId
+        mockUserSub.subscriptionId,
+        { expand: ["items.data.price.product"] }
       );
       expect(result.userSubscriptions).toContainEqual({
         ...expectedValue,
@@ -158,6 +162,7 @@ describe("stripe-subscriptions API Module tests", () => {
 
       const result = await controller.createCheckout({
         userId: mockUserId,
+        userEmail: mockUserEmail,
         priceId: mockPriceId,
         seats: 1,
       });
@@ -174,6 +179,8 @@ describe("stripe-subscriptions API Module tests", () => {
         subscription_data: { metadata: { userId: mockUserId } },
         saved_payment_method_options: { payment_method_save: "enabled" },
         mode: "subscription",
+        tax_id_collection: { enabled: true },
+        automatic_tax: { enabled: true },
       });
 
       expect(result.url).toBe(mockUrl);
@@ -181,12 +188,11 @@ describe("stripe-subscriptions API Module tests", () => {
 
     it("should create a Checkout Session with email and return URL", async () => {
       const mockUrl = "https://checkout.stripe.com/test-session";
-      const mockUser = { email: "mock@mail.com" };
+      const mockUser = { email: mockUserEmail };
 
       (subscriptionRepoMock.getUserSubscriptions as Mock).mockResolvedValue(
         undefined
       );
-      (userRepositoryMock.getUserById as Mock).mockResolvedValue(mockUser);
 
       (stripe.checkout.sessions.create as Mock).mockResolvedValue({
         url: mockUrl,
@@ -194,6 +200,7 @@ describe("stripe-subscriptions API Module tests", () => {
 
       const result = await controller.createCheckout({
         userId: mockUserId,
+        userEmail: mockUserEmail,
         priceId: mockPriceId,
         seats: 1,
       });
@@ -210,6 +217,8 @@ describe("stripe-subscriptions API Module tests", () => {
         subscription_data: { metadata: { userId: mockUserId } },
         saved_payment_method_options: { payment_method_save: "enabled" },
         mode: "subscription",
+        tax_id_collection: { enabled: true },
+        automatic_tax: { enabled: true },
       });
 
       expect(result.url).toBe(mockUrl);
@@ -224,6 +233,7 @@ describe("stripe-subscriptions API Module tests", () => {
 
       const result = await controller.createPaymentLink({
         userId: mockUserId,
+        userEmail: mockUserEmail,
         priceId: mockPriceId,
         seats: 1,
       });
@@ -237,6 +247,8 @@ describe("stripe-subscriptions API Module tests", () => {
           },
         ],
         subscription_data: { metadata: { userId: mockUserId } },
+        tax_id_collection: { enabled: true },
+        automatic_tax: { enabled: true },
         after_completion: {
           type: "redirect",
           redirect: {},
@@ -257,7 +269,7 @@ describe("stripe-subscriptions API Module tests", () => {
       await controller.addUserToSeat({
         userId: mockUserId,
         subscriptionId: mockSubId,
-        addUserId: 567
+        addUserId: 567,
       });
 
       expect(subscriptionRepoMock.createUserSubscription).toHaveBeenCalledWith({
@@ -282,7 +294,7 @@ describe("stripe-subscriptions API Module tests", () => {
         controller.addUserToSeat({
           userId: mockUserId,
           subscriptionId: mockSubId,
-          addUserId: 567
+          addUserId: 567,
         })
       ).rejects.toThrowError(noAvailableSeats());
     });
@@ -306,7 +318,7 @@ describe("stripe-subscriptions API Module tests", () => {
         controller.addUserToSeat({
           userId: mockUserId,
           subscriptionId: mockSubId,
-          addUserId: 567
+          addUserId: 567,
         })
       ).rejects.toThrowError(noAvailableSeats());
     });
@@ -347,7 +359,10 @@ describe("stripe-subscriptions API Module tests", () => {
       });
 
       const { customerId, ...expectedValue } = mockNewUserSub;
-      expect(result).toEqual(expectedValue);
+      expect(result).toEqual({
+        ...expectedValue,
+        name: mockNewSubItem.price.product.name,
+      });
     });
 
     it("should throw notAuthorizedToModifySubscription if non-owner tries to update subscription plan", async () => {
@@ -459,7 +474,7 @@ describe("stripe-subscriptions API Module tests", () => {
       await controller.removeUserFromSeat({
         userId: mockUserId,
         subscriptionId: mockSubId,
-        removeUserId: mockRemoveUserId
+        removeUserId: mockRemoveUserId,
       });
 
       expect(
@@ -476,7 +491,7 @@ describe("stripe-subscriptions API Module tests", () => {
         controller.removeUserFromSeat({
           userId: mockUserId,
           subscriptionId: mockSubId,
-          removeUserId: mockUserId
+          removeUserId: mockUserId,
         })
       ).rejects.toThrowError(cantRemoveSubOwner());
     });

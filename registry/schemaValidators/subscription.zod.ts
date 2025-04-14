@@ -6,9 +6,12 @@ const getUserSubsSchema = z.object({
 });
 
 const createCheckoutSchema = getUserSubsSchema.extend({
+  userEmail: z.string().email(),
   priceId: z.string(),
   seats: z.number().min(1).default(1).optional(),
 });
+
+const createPaymentLinkSchema = createCheckoutSchema.omit({ userEmail: true });
 
 const updatePlanSchema = getUserSubsSchema.extend({
   subscriptionId: z.string(),
@@ -45,7 +48,7 @@ export const subscriptionValidator = (): SubscriptionValidator => {
     },
 
     async validateCreatePaymentLink(payload) {
-      return await createCheckoutSchema.parseAsync(payload);
+      return await createPaymentLinkSchema.parseAsync(payload);
     },
 
     async validateUpdatePlanSub(payload) {

@@ -7,7 +7,6 @@ import { createSubscriptionController } from "@/modules/stripeSubscriptions/cont
 import { createSubscriptionsWebHookController } from "@/modules/stripeSubscriptions/controllers/subscriptionWebhook.js";
 
 import { createUserSubRepository } from "@/repositories/subscription.postgres.js";
-import { createUserRepository } from "@/repositories/user.postgres.js";
 
 import { validateStripeSignature } from "@/modules/stripeSubscriptions/middleware/subscriptions/stripeSignature.js";
 
@@ -19,13 +18,11 @@ const STRIPE_API_KEY = process.env.STRIPE_API_KEY as string;
 const stripe = new Stripe(STRIPE_API_KEY);
 const router = express.Router();
 
-const userRepository = createUserRepository();
 const userSubRepository = createUserSubRepository();
 
 const subscriptionController = createSubscriptionController(
   stripe,
   userSubRepository,
-  userRepository
 );
 const subscriptionWHController = createSubscriptionsWebHookController(
   stripe,
@@ -134,6 +131,7 @@ router.post("/payment/checkout", protectedRoute, async (req, res, next) => {
     .validateCreateCheckout({
       ...payload,
       userId: user.userId,
+      userEmail: user.email,
     })
     .then(subscriptionController.createCheckout)
     .then((result) => res.json(response(result)))
@@ -148,6 +146,7 @@ router.post("/payment/link", protectedRoute, async (req, res, next) => {
     .validateCreatePaymentLink({
       ...payload,
       userId: user.userId,
+      userEmail: user.email,
     })
     .then(subscriptionController.createPaymentLink)
     .then((result) => res.json(response(result)))
