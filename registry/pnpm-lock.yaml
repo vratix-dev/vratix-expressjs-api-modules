@@ -36,8 +36,8 @@ importers:
         specifier: ^4.0.5
         version: 4.0.5
       stripe:
-        specifier: ^17.2.1
-        version: 17.2.1
+        specifier: ^18.0.0
+        version: 18.0.0
       yup:
         specifier: ^1.4.0
         version: 1.4.0
@@ -1715,8 +1715,8 @@ packages:
     resolution: {integrity: sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ==}
     engines: {node: '>=12'}
 
-  stripe@17.2.1:
-    resolution: {integrity: sha512-Mwb0SitV/UjxTLSUiTlUQ0VDE/gfyQ7OHDGdvDdvKIH4CNNqobPKlzlWhoZHFFU0OA/YsZyBtPULK4JG86BAAg==}
+  stripe@18.0.0:
+    resolution: {integrity: sha512-3Fs33IzKUby//9kCkCa1uRpinAoTvj6rJgQ2jrBEysoxEvfsclvXdna1amyEYbA2EKkjynuB4+L/kleCCaWTpA==}
     engines: {node: '>=12.*'}
 
   strnum@1.0.5:
@@ -4142,7 +4142,7 @@ snapshots:
     dependencies:
       ansi-regex: 6.1.0
 
-  stripe@17.2.1:
+  stripe@18.0.0:
     dependencies:
       '@types/node': 22.7.5
       qs: 6.13.0
