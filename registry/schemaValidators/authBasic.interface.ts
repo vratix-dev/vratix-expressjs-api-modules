@@ -9,7 +9,7 @@ export type RefreshTokenSchema = {
 };
 
 export interface BasicAuthValidator {
-  validateAuth: (basicAuthSchema: BasicAuthSchema) => Promise<BasicAuthSchema>;
+  validateAuth: (payload: BasicAuthSchema) => Promise<BasicAuthSchema>;
   validateRefreshToken: (
     payload: RefreshTokenSchema
   ) => Promise<RefreshTokenSchema>;

@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import {
   GetUserSubsSchema,
   CreateCheckoutSchema,
+  CreatePaymentLinkSchema,
   CancelSubscriptionSchema,
   UpdatePlanSchema,
   UpdateSubscriptionSeatsSchema,
@@ -59,7 +60,7 @@ interface SubscriptionController {
 
   createCheckout: (props: CreateCheckoutSchema) => Promise<{ url: string }>;
 
-  createPaymentLink: (props: CreateCheckoutSchema) => Promise<{ url: string }>;
+  createPaymentLink: (props: CreatePaymentLinkSchema) => Promise<{ url: string }>;
 
   addUserToSeat: (props: AddUserToSeatSchema) => void;
 

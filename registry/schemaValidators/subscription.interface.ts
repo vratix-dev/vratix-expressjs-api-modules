@@ -9,7 +9,7 @@ export type CreateCheckoutSchema = {
   seats?: number;
 };
 
-export type CreatePaymentLinkSchema = CreateCheckoutSchema;
+export type CreatePaymentLinkSchema = Omit<CreateCheckoutSchema, "userEmail">;
 
 export type GetSubscriptionSchema = {
   userId: number;
@@ -21,8 +21,8 @@ export type UpdatePlanSchema = GetSubscriptionSchema & {
 };
 
 export type UpdateSubscriptionSeatsSchema = GetSubscriptionSchema & {
-    newSeats: number;
-}
+  newSeats: number;
+};
 
 export interface AddUserToSeatSchema extends GetSubscriptionSchema {
   addUserId: number;
@@ -35,34 +35,34 @@ export type CancelSubscriptionSchema = GetSubscriptionSchema;
 
 export interface SubscriptionValidator {
   validateGetUserSubs: (
-    getSubsPayload: GetUserSubsSchema
+    payload: GetUserSubsSchema
   ) => Promise<GetUserSubsSchema>;
 
   validateCreateCheckout: (
-    createCheckoutPayload: CreateCheckoutSchema
+    payload: CreateCheckoutSchema
   ) => Promise<CreateCheckoutSchema>;
 
   validateCreatePaymentLink: (
-    createPaymentLink: CreatePaymentLinkSchema
+    payload: CreatePaymentLinkSchema
   ) => Promise<CreatePaymentLinkSchema>;
 
   validateUpdatePlanSub: (
-    updatePlanPayload: UpdatePlanSchema
+    payload: UpdatePlanSchema
   ) => Promise<UpdatePlanSchema>;
 
   validateUpdateSeats: (
-    updateSeatsPayload: UpdateSubscriptionSeatsSchema
+    payload: UpdateSubscriptionSeatsSchema
   ) => Promise<UpdateSubscriptionSeatsSchema>;
 
   validateAddUserToSeat: (
-    addUserToSeatPayload: AddUserToSeatSchema
+    payload: AddUserToSeatSchema
   ) => Promise<AddUserToSeatSchema>;
 
   validateRemoveUserFromSeat: (
-    removeUserFromSeat: RemoveUserFromSeatSchema
+    payload: RemoveUserFromSeatSchema
   ) => Promise<RemoveUserFromSeatSchema>;
 
   validateCancelSubscription: (
-    cancelSubPayload: CancelSubscriptionSchema
+    payload: CancelSubscriptionSchema
   ) => Promise<CancelSubscriptionSchema>;
 }
