@@ -7,27 +7,27 @@
   },
   "type": "module",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.676.0",
-    "@aws-sdk/credential-provider-sso": "^3.687.0",
-    "@aws-sdk/lib-storage": "^3.676.0",
+    "@aws-sdk/client-s3": "^3.787.0",
+    "@aws-sdk/credential-provider-sso": "^3.787.0",
+    "@aws-sdk/lib-storage": "^3.787.0",
     "argon2": "^0.41.1",
-    "express": "^4.21.0",
+    "express": "^4.21.2",
     "formidable": "^3.5.2",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.13.0",
+    "pg": "^8.14.1",
     "postmark": "^4.0.5",
     "stripe": "^18.0.0",
-    "yup": "^1.4.0",
-    "zod": "^3.23.8"
+    "yup": "^1.6.1",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@smithy/util-stream": "^3.2.1",
-    "@types/express": "^5.0.0",
+    "@smithy/util-stream": "^3.3.4",
+    "@types/express": "^5.0.1",
     "@types/formidable": "^3.4.5",
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/pg": "^8.11.10",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/pg": "^8.11.12",
     "@vitest/coverage-istanbul": "3.0.8",
     "aws-sdk-client-mock": "^4.1.0",
-    "vitest": "^3.0.8"
+    "vitest": "^3.1.1"
   }
 }
