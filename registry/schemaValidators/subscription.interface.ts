@@ -4,6 +4,7 @@ export type GetUserSubsSchema = {
 
 export type CreateCheckoutSchema = {
   userId: number;
+  userEmail: string;
   priceId: string;
   seats?: number;
 };
@@ -15,15 +16,11 @@ export type GetSubscriptionSchema = {
   subscriptionId: string;
 };
 
-export type UpdatePlanSchema = {
-  userId: number;
-  subscriptionId: string;
+export type UpdatePlanSchema = GetSubscriptionSchema & {
   newPriceId: string;
 };
 
-export type UpdateSubscriptionSeatsSchema = {
-    userId: number;
-    subscriptionId: string;
+export type UpdateSubscriptionSeatsSchema = GetSubscriptionSchema & {
     newSeats: number;
 }
 

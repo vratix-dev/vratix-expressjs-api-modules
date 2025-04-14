@@ -5,8 +5,6 @@ import { createSubscriptionsWebHookController } from "@/modules/stripeSubscripti
 
 import { UserSubscriptionRepository } from "@/repositories/subscription.interface.js";
 
-import { stripeWebhookEventNotSupported } from "@/modules/stripeSubscriptions/utils/errors/subscriptions.js";
-
 // Mock Stripe instance
 vi.mock("stripe", () => {
   return {
@@ -89,14 +87,6 @@ describe("stripe-subscriptions API Module tests", () => {
       expect(subscriptionRepoMock.removeUserSubscription).toHaveBeenCalledWith(
         mockSubId
       );
-    });
-
-    it("should throw stripeWebhookEventNotSupported for unsupported event types", async () => {
-      const mockEvent = { type: "unsupported.event.type", data: {} };
-
-      await expect(
-        controller.handleWebhook(mockEvent as Stripe.Event)
-      ).rejects.toThrow(stripeWebhookEventNotSupported(mockEvent.type));
     });
   });
 });

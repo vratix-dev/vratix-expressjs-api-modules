@@ -6,6 +6,7 @@ const getUserSubsSchema = yup.object({
 });
 
 const createCheckoutSchema = getUserSubsSchema.shape({
+  userEmail: yup.string().email().required(),
   priceId: yup.string().required(),
   seats: yup.number().min(1).default(1),
 });

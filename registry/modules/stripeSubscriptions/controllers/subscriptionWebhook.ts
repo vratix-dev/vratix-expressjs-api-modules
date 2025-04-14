@@ -2,8 +2,6 @@ import Stripe from "stripe";
 
 import { UserSubscriptionRepository } from "@/repositories/subscription.interface.js";
 
-import { stripeWebhookEventNotSupported } from "@/modules/stripeSubscriptions/utils/errors/subscriptions.js";
-
 interface SubscriptionsWHController {
   handleWebhook: (event: Stripe.Event) => void;
 }
@@ -50,7 +48,7 @@ export const createSubscriptionsWebHookController = (
           break;
         }
         default: {
-          throw stripeWebhookEventNotSupported(event.type);
+          break;
         }
       }
     },

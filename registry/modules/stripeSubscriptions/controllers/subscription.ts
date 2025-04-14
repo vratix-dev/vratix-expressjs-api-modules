@@ -14,7 +14,6 @@ import {
   UserSubscription,
   UserSubscriptionRepository,
 } from "@/repositories/subscription.interface.js";
-import { UserRepository } from "@/repositories/user.interface.js";
 
 import {
   noEmptySeatsToRemove,
@@ -43,6 +42,7 @@ export type Subscription = {
 };
 
 type UserSubsOutput = {
+  name: string;
   plan: string;
   subscriptionId: string;
   isOwner: boolean;
@@ -76,8 +76,7 @@ interface SubscriptionController {
 
 export const createSubscriptionController = (
   stripe: Stripe,
-  userSubRepository: UserSubscriptionRepository,
-  userRepository: UserRepository
+  userSubRepository: UserSubscriptionRepository
 ): SubscriptionController => {
   const generatePlanKey = (priceKey: string | null, productName: string) => {
     return priceKey || productName.toLowerCase().replaceAll(" ", "_");
@@ -123,15 +122,18 @@ export const createSubscriptionController = (
       const userSubs = await userSubRepository.getUserSubscriptions(userId);
       const subscriptionPromises = userSubs.map(async (sub) => {
         const subscription = await stripe.subscriptions.retrieve(
-          sub.subscriptionId
+          sub.subscriptionId,
+          { expand: ["items.data.price.product"] }
         );
-        const items = subscription.items.data[0];
+        const subscriptionItem = subscription.items.data[0];
+        const product = subscriptionItem.price.product as Stripe.Product;
 
         return {
+          name: product.name,
           plan: sub.plan,
           subscriptionId: sub.subscriptionId,
           isOwner: sub.isOwner,
-          seats: items.quantity,
+          seats: subscriptionItem.quantity,
           createdAt: sub.createdAt,
         };
       });
@@ -143,7 +145,7 @@ export const createSubscriptionController = (
       return { userSubscriptions };
     },
 
-    async createCheckout({ userId, priceId, seats }) {
+    async createCheckout({ userId, userEmail, priceId, seats }) {
       const userSubscription = await userSubRepository
         .getUserSubscriptions(userId)
         .then((res) => res?.at(0));
@@ -154,8 +156,7 @@ export const createSubscriptionController = (
         customer = userSubscription.customerId;
       } else {
         // First time paying user, create Stripe Customer after Checkout with email
-        const user = await userRepository.getUserById(userId);
-        customerEmail = user?.email;
+        customerEmail = userEmail;
       }
 
       const checkout = await stripe.checkout.sessions.create({
@@ -163,7 +164,7 @@ export const createSubscriptionController = (
         customer_email: customerEmail,
         line_items: [
           {
-            adjustable_quantity: { enabled: true }, // Remove this line if your subscription is not per seat based
+            adjustable_quantity: { enabled: seats !== undefined },
             quantity: seats || 1,
             price: priceId,
           },
@@ -172,6 +173,8 @@ export const createSubscriptionController = (
         saved_payment_method_options: { payment_method_save: "enabled" },
         success_url: CHECKOUT_SUCCESS_URL,
         cancel_url: CHECKOUT_CANCEL_URL,
+        tax_id_collection: { enabled: true },
+        automatic_tax: { enabled: true },
         mode: "subscription",
       });
 
@@ -182,17 +185,17 @@ export const createSubscriptionController = (
       const paymentLink = await stripe.paymentLinks.create({
         line_items: [
           {
-            adjustable_quantity: { enabled: true }, // Remove this line if your subscription is not per seat based
+            adjustable_quantity: { enabled: seats !== undefined },
             quantity: seats || 1,
             price: priceId,
           },
         ],
         subscription_data: { metadata: { userId } },
+        tax_id_collection: { enabled: true },
+        automatic_tax: { enabled: true },
         after_completion: {
           type: "redirect",
-          redirect: {
-            url: CHECKOUT_SUCCESS_URL,
-          },
+          redirect: { url: CHECKOUT_SUCCESS_URL },
         },
       });
 
@@ -274,6 +277,7 @@ export const createSubscriptionController = (
         );
 
         return {
+          name: product.name,
           plan: newPlanKey,
           isOwner: true,
           seats: newSubscriptionItem.quantity,
