@@ -3,6 +3,10 @@
 ![GitHub License](https://img.shields.io/github/license/vratix-dev/api-library)
 ![NPM Downloads](https://img.shields.io/npm/dm/vratix)
 
+
+> 🚀 Start building with [Line0](https://line0.dev) today - The first AI pair programmer for Express.js backend services! 🚀 
+
+
 ## TL;DR
 
 Use the `init` command to create a new Node.js project: 
@@ -109,3 +113,7 @@ docker compose up -d --build
 ```bash
 npx vratix add <module>
 ```
+
+## Build with AI
+
+You can now build all your express.js API services using AI at [Line0](https://line0.dev), it uses the API modules from this library and helps you get a fully working service in a few prompts. Try it out today and let us know what you build with it! 
